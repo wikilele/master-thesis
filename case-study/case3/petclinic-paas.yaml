@@ -1,0 +1,111 @@
+---
+components:
+  PetClinic:
+    operations:
+      start: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files/start.sh
+      configure: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files/configure.sh
+    type: web_application
+    relations:
+    - connects_to: MySQL_Database
+    - hosted_on: AWS_Beanstalk
+    artifacts:
+    - war: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-App/files/petclinic.war
+  MySQL_Database:
+    operations:
+      configure: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files/configure.sh
+    relations:
+    - hosted_on: AWS_Aurora
+    type: mysql_database
+    properties:
+      password: petclinic
+      schema_name: petclinic
+      user: pc
+    artifacts:
+    - sql: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Petclinic-Schema/files/schema.sql
+  AWS_Aurora:
+    type: aws_aurora
+    properties:
+      region: ''
+      instance_type: ''
+  AWS_Beanstalk:
+    operations:
+      stop: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/AWS_Beanstalk-Stop/files/stop.sh
+      start: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/AWS_Beanstalk-Start/files/start.sh
+      create: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/AWS_Beanstalk-Create/files/create.sh
+      configure: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/AWS_Beanstalk-Configure/files/configure.sh
+      delete: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/AWS_Beanstalk-Delete/files/delete.sh
+    type: aws_beanstalk
+    properties:
+      archetype: ''
+      max_instances: ''
+      min_instances: ''
+      region: ''
+relation_types:
+  depends_on:
+    extends: null
+  hosted_on:
+    extends: depends_on
+  connects_to:
+    extends: depends_on
+component_types:
+  aws_beanstalk:
+    extends: paas
+    properties:
+      archetype:
+        type: string
+      max_instances:
+        type: string
+      min_instances:
+        type: string
+      region:
+        type: string
+  web_application:
+    extends: base
+  database:
+    extends: base
+    properties:
+      password:
+        type: string
+      schema_name:
+        type: string
+      user:
+        type: string
+  aws_aurora:
+    extends: dbaas
+    properties:
+      region:
+        type: string
+      instance_type:
+        type: string
+  paas:
+    extends: platform
+    properties:
+      archetype:
+        type: string
+      min_instances:
+        type: string
+      max_instances:
+        type: string
+      region:
+        type: string
+  dbaas:
+    extends: platform
+    properties:
+      region:
+        type: string
+      instance_type:
+        type: string
+  platform:
+    extends: base
+    properties:
+      region:
+        type: string
+  mysql_database:
+    extends: database
+    properties:
+      password:
+        type: string
+      schema_name:
+        type: string
+      user:
+        type: string

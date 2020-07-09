@@ -1,0 +1,91 @@
+---
+# Play for component Compute_2
+- name: Compute_2
+  hosts: compute_2
+  become: yes
+  become_user: root
+  vars:
+    compute_2_machine_image: 
+    compute_2_instance_type: 
+    compute_2_os_family: 
+  tasks:
+
+# Play for component Compute
+- name: Compute
+  hosts: compute
+  become: yes
+  become_user: root
+  vars:
+    compute_machine_image: ubuntu
+    compute_instance_type: large
+    compute_os_family: linux
+  tasks:
+
+# Play for component MySQL_DBMS
+- name: MySQL_DBMS
+  hosts: compute_2
+  become: yes
+  become_user: root
+  vars:
+    compute_2_machine_image: 
+    mysql_dbms_root_password: petclinic
+    compute_2_instance_type: 
+    mysql_dbms_port: 3306
+    compute_2_os_family: 
+  tasks:
+    - name: create
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Create/files/create.sh
+    - name: start
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Start/files/start.sh
+
+# Play for component Tomcat
+- name: Tomcat
+  hosts: compute
+  become: yes
+  become_user: root
+  vars:
+    compute_machine_image: ubuntu
+    tomcat_port: 8080
+    compute_instance_type: large
+    compute_os_family: linux
+  tasks:
+    - name: create
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Create/files/create.sh
+    - name: start
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Start/files/start.sh
+
+# Play for component MySQL_Database
+- name: MySQL_Database
+  hosts: compute_2
+  become: yes
+  become_user: root
+  vars:
+    compute_2_machine_image: 
+    mysql_dbms_root_password: petclinic
+    compute_2_instance_type: 
+    mysql_dbms_port: 3306
+    mysql_database_password: petclinic
+    mysql_database_user: pc
+    mysql_database_schema_name: petclinic
+    compute_2_os_family: 
+  tasks:
+    - name: configure
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files/configure.sh
+
+# Play for component PetClinic
+- name: PetClinic
+  hosts: compute
+  become: yes
+  become_user: root
+  vars:
+    compute_machine_image: ubuntu
+    tomcat_port: 8080
+    compute_instance_type: large
+    compute_os_family: linux
+  tasks:
+    - name: configure
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files/configure.sh
+    - name: start
+      script: artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files/start.sh
+
+

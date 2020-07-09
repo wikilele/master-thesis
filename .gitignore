@@ -1,6 +1,19 @@
-*.*
+images
+_minted-tesi
+bibli.txt
 
-!README.md
-!tesi.pdf
-!.gitignore
-!petclinic-xaas.yaml
+bibliography.bib
+
+tesi.aux
+tesi.bbl
+tesi.bcf
+tesi.blg
+tesi.lof
+tesi.log
+tesi.out
+tesi.run.xml
+tesi.synctex.gz
+tesi.tex
+tesi.tex.bbl
+tesi.tex.blg
+tesi.toc

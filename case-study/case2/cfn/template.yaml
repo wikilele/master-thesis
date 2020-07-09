@@ -1,0 +1,303 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  KeyName:
+    Type: "AWS::EC2::KeyPair::KeyName"
+    Description: "Name of an existing EC2 key pair to enable SSH access to the instances"
+Resources:
+  compute:
+    Type: "AWS::EC2::Instance"
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          LifecycleOperations:
+          - "Init"
+          - "Create"
+          - "Configure"
+          - "Start"
+        Init:
+          files:
+            /opt/env.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/set-env-compute.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-App/files/petclinic.war:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-App/files/petclinic.war"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            set_env_compute_sh:
+              command: "/opt/env.sh"
+              env:
+                MYSQL_DATABASE_USER: "pc"
+                COMPUTE_INSTANCE_TYPE: "large"
+                MYSQL_DATABASE_SCHEMA_NAME: "petclinic"
+                COMPUTE_OS_FAMILY: "linux"
+                COMPUTE_MACHINE_IMAGE: "ubuntu"
+                MYSQL_DATABASE_PASSWORD: "petclinic"
+                MYSQL_DBMS_PORT: "3306"
+                TOMCAT_PORT: "8080"
+                MYSQL_DBMS_ROOT_PASSWORD: "petclinic"
+                MYSQL_DATABASE_HOSTNAME:
+                  Fn::GetAtt:
+                  - "compute_2"
+                  - "PublicIp"
+              cwd: "/opt/"
+        Start:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Start/files/start.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Start/files/start.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files/start.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files/start.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_tomcat-start_files_start_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Start/files/start.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Start/files"
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_petclinic-start_files_start_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files/start.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Start/files"
+        Create:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Create/files/create.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Create/files/create.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_tomcat-create_files_create_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Create/files/create.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Tomcat-Create/files"
+        Configure:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files/configure.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files/configure.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_petclinic-configure_files_configure_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files/configure.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/PetClinic-Configure/files"
+      AWS::CloudFormation::Authentication:
+        S3Creds:
+          buckets:
+          - "edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab"
+          type: "S3"
+          roleName:
+            Ref: "InstanceRole"
+    Properties:
+      SecurityGroupIds:
+      - Ref: "compute_security_group"
+      ImageId: "ami-0bbc25e23a7640b9b"
+      InstanceType: "t2.micro"
+      KeyName:
+        Ref: "KeyName"
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+          - ""
+          - - "#!/bin/bash -xe\n"
+            - "mkdir -p /tmp/aws-cfn-bootstrap-latest\n"
+            - "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\
+              \ | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n"
+            - "apt-get update\n"
+            - "DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n"
+            - "apt-get -y install python-setuptools\n"
+            - "easy_install /tmp/aws-cfn-bootstrap-latest\n"
+            - "cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup\n"
+            - "chmod 755 /etc/init.d/cfn-hup\n"
+            - "update-rc.d cfn-hup defaults\n"
+            - "# Install files and packages from metadata\n"
+            - "/usr/local/bin/cfn-init -v "
+            - "         --stack "
+            - Ref: "AWS::StackName"
+            - "         --resource compute "
+            - "         --configsets LifecycleOperations "
+            - "         --region "
+            - Ref: "AWS::Region"
+            - "\n"
+            - "/usr/local/bin/cfn-signal -e $? "
+            - "         --stack "
+            - Ref: "AWS::StackName"
+            - "         --resource compute "
+            - "         --region "
+            - Ref: "AWS::Region"
+            - "\n"
+      IamInstanceProfile:
+        Ref: "InstanceProfile"
+  InstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: "InstanceRole"
+  compute_2_security_group:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        CidrIp: "0.0.0.0/0"
+        FromPort: 22
+        ToPort: 22
+      - IpProtocol: "tcp"
+        CidrIp: "0.0.0.0/0"
+        FromPort: 3306
+        ToPort: 3306
+  InstanceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service:
+            - "ec2.amazonaws.com"
+  RolePolicies:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "S3Download"
+      PolicyDocument:
+        Statement:
+        - Action:
+          - "s3:GetObject"
+          Effect: "Allow"
+          Resource:
+          - "arn:aws:s3:::edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab/*"
+      Roles:
+      - Ref: "InstanceRole"
+  compute_security_group:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        CidrIp: "0.0.0.0/0"
+        FromPort: 8080
+        ToPort: 8080
+      - IpProtocol: "tcp"
+        CidrIp: "0.0.0.0/0"
+        FromPort: 22
+        ToPort: 22
+  compute_2:
+    Type: "AWS::EC2::Instance"
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          LifecycleOperations:
+          - "Init"
+          - "Create"
+          - "Configure"
+          - "Start"
+        Init:
+          files:
+            /opt/env.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/set-env-compute-2.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Petclinic-Schema/files/schema.sql:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/Petclinic-Schema/files/schema.sql"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            set_env_compute_2_sh:
+              command: "/opt/env.sh"
+              env:
+                MYSQL_DATABASE_USER: "pc"
+                MYSQL_DBMS_PORT: "3306"
+                MYSQL_DATABASE_SCHEMA_NAME: "petclinic"
+                MYSQL_DBMS_ROOT_PASSWORD: "petclinic"
+                MYSQL_DATABASE_PASSWORD: "petclinic"
+              cwd: "/opt/"
+        Start:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Start/files/start.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Start/files/start.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_mysql_dbms-start_files_start_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Start/files/start.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Start/files"
+        Create:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Create/files/create.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Create/files/create.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_mysql_dbms-create_files_create_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Create/files/create.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_DBMS-Create/files"
+        Configure:
+          files:
+            /opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files/configure.sh:
+              source: "http://edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab.s3.amazonaws.com/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files/configure.sh"
+              mode: "000777"
+              owner: "root"
+              group: "root"
+          commands:
+            artifacttemplates_https%3a%2f%2fedmm_uni-stuttgart_de%2fartifacttemplates_mysql_database-configure_files_configure_sh:
+              command: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files/configure.sh"
+              cwd: "/opt/artifacttemplates/https%3A%2F%2Fedmm.uni-stuttgart.de%2Fartifacttemplates/MySQL_Database-Configure/files"
+      AWS::CloudFormation::Authentication:
+        S3Creds:
+          buckets:
+          - "edmm-bucket-d1193b5d-d15b-4813-ab41-d0f2c62047ab"
+          type: "S3"
+          roleName:
+            Ref: "InstanceRole"
+    Properties:
+      SecurityGroupIds:
+      - Ref: "compute_2_security_group"
+      ImageId: "ami-0bbc25e23a7640b9b"
+      InstanceType: "t2.micro"
+      KeyName:
+        Ref: "KeyName"
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+          - ""
+          - - "#!/bin/bash -xe\n"
+            - "mkdir -p /tmp/aws-cfn-bootstrap-latest\n"
+            - "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\
+              \ | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n"
+            - "apt-get update\n"
+            - "DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n"
+            - "apt-get -y install python-setuptools\n"
+            - "easy_install /tmp/aws-cfn-bootstrap-latest\n"
+            - "cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup\n"
+            - "chmod 755 /etc/init.d/cfn-hup\n"
+            - "update-rc.d cfn-hup defaults\n"
+            - "# Install files and packages from metadata\n"
+            - "/usr/local/bin/cfn-init -v "
+            - "         --stack "
+            - Ref: "AWS::StackName"
+            - "         --resource compute_2 "
+            - "         --configsets LifecycleOperations "
+            - "         --region "
+            - Ref: "AWS::Region"
+            - "\n"
+            - "/usr/local/bin/cfn-signal -e $? "
+            - "         --stack "
+            - Ref: "AWS::StackName"
+            - "         --resource compute_2 "
+            - "         --region "
+            - Ref: "AWS::Region"
+            - "\n"
+      IamInstanceProfile:
+        Ref: "InstanceProfile"
+

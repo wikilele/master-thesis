@@ -1,0 +1,10 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  annotations: {}
+  labels: {}
+  name: "PetClinic-config"
+binaryData: {}
+data: {}
+

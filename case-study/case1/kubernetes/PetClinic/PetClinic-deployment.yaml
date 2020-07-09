@@ -1,0 +1,38 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  annotations: {}
+  labels:
+    app: "PetClinic"
+  name: "PetClinic"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "PetClinic"
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        app: "PetClinic"
+      name: "PetClinic"
+    spec:
+      containers:
+      - env:
+        - name: "OS_FAMILY"
+          value: "linux"
+        - name: "MACHINE_IMAGE"
+          value: "ubuntu"
+        - name: "PORT"
+          value: "8080"
+        - name: "INSTANCE_TYPE"
+          value: "large"
+        image: "PetClinic:latest"
+        imagePullPolicy: "Never"
+        name: "PetClinic"
+        ports:
+        - containerPort: 8080
+          name: "tomcat"
+      nodeSelector: {}
+

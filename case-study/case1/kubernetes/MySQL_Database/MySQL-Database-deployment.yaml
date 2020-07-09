@@ -1,0 +1,46 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  annotations: {}
+  labels:
+    app: "MySQL-Database"
+  name: "MySQL-Database"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "MySQL-Database"
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        app: "MySQL-Database"
+      name: "MySQL-Database"
+    spec:
+      containers:
+      - env:
+        - name: "MACHINE_IMAGE"
+          value: ""
+        - name: "OS_FAMILY"
+          value: ""
+        - name: "SCHEMA_NAME"
+          value: "petclinic"
+        - name: "ROOT_PASSWORD"
+          value: "petclinic"
+        - name: "PASSWORD"
+          value: "petclinic"
+        - name: "INSTANCE_TYPE"
+          value: ""
+        - name: "PORT"
+          value: "3306"
+        - name: "USER"
+          value: "pc"
+        image: "MySQL-Database:latest"
+        imagePullPolicy: "Never"
+        name: "MySQL-Database"
+        ports:
+        - containerPort: 3306
+          name: "mysql-dbms"
+      nodeSelector: {}
+
