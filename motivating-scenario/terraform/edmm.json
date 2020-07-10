@@ -1,0 +1,17 @@
+{
+  "id" : "ecc5b9d8-b7e2-4133-84e9-8f9293cb9bc1",
+  "input" : null,
+  "deploymentTechnology" : {
+    "id" : "terraform",
+    "name" : "Terraform",
+    "deploymentSupported" : false,
+    "transformationParameters" : null,
+    "executionParameters" : null
+  },
+  "sourceDirectory" : null,
+  "targetDirectory" : "/home/leonardo/Documenti/unipi/tesi/EDMM/last-feature/terraform",
+  "timestamp" : 1594392733164,
+  "state" : "TRANSFORMING",
+  "userInputs" : null,
+  "values" : null
+}
